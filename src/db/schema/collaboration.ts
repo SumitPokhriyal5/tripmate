@@ -7,7 +7,6 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-import { voteOptionEnum } from "./enums";
 import { trips } from "./trips";
 import { activities } from "./itinerary";
 import { profiles } from "./users";
@@ -25,22 +24,24 @@ export const votes = pgTable(
       .notNull()
       .references(() => profiles.id, { onDelete: "cascade" }),
 
-    vote: voteOptionEnum("vote").notNull(),
-
     createdAt: timestamp("created_at", {
       withTimezone: true,
-    }).notNull().defaultNow(),
+    })
+      .notNull()
+      .defaultNow(),
 
     updatedAt: timestamp("updated_at", {
       withTimezone: true,
-    }).notNull().defaultNow(),
+    })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [
     uniqueIndex("votes_activity_user_unique").on(
       table.activityId,
-      table.userId
+      table.userId,
     ),
-  ]
+  ],
 );
 
 export const comments = pgTable(
@@ -52,8 +53,9 @@ export const comments = pgTable(
       .notNull()
       .references(() => trips.id, { onDelete: "cascade" }),
 
-    activityId: uuid("activity_id")
-      .references(() => activities.id, { onDelete: "cascade" }),
+    activityId: uuid("activity_id").references(() => activities.id, {
+      onDelete: "cascade",
+    }),
 
     userId: uuid("user_id")
       .notNull()
@@ -63,17 +65,18 @@ export const comments = pgTable(
 
     createdAt: timestamp("created_at", {
       withTimezone: true,
-    }).notNull().defaultNow(),
+    })
+      .notNull()
+      .defaultNow(),
 
     updatedAt: timestamp("updated_at", {
       withTimezone: true,
-    }).notNull().defaultNow(),
+    })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [
-    index("comments_trip_created_idx").on(
-      table.tripId,
-      table.createdAt
-    ),
+    index("comments_trip_created_idx").on(table.tripId, table.createdAt),
     index("comments_activity_idx").on(table.activityId),
-  ]
+  ],
 );

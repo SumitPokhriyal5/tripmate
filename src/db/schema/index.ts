@@ -1,4 +1,3 @@
-export * from "./auth";
 export * from "./enums";
 export * from "./users";
 export * from "./trips";
